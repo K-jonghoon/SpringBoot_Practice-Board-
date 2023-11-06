@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.min.edu.model.IPlayerDao">
+	
+	<select id="selectPlayer" resultType="PlayerVo">
+		SELECT PLAYER_ID , PLAYER_NAME , BACK_NO , 
+			TEAM_ID
+			FROM (SELECT PLAYER_ID , PLAYER_NAME , BACK_NO , 
+						TEAM_ID, ROW_NUMBER () OVER(ORDER BY PLAYER_ID) RN 
+					FROM PLAYER p
+					<if test="team_id!=null">
+						WHERE TEAM_ID = #{team_id}
+					</if>
+					) 
+			WHERE RN BETWEEN #{first} AND #{last}
+	</select>
+	
+	<select id="cntPlayer" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+			FROM PLAYER p
+			<if test="team_id!=null">
+				WHERE TEAM_ID = #{team_id}
+			</if>
+	</select>
+	
+</mapper>
+  
